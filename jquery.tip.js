@@ -11,13 +11,12 @@
  *   close
  * Options:
  *   autoOpen[true] - if this tip should be open after create
- *   text["INSERT YOUR OWN TIP HERE!"] - text to be displayed inside tip can be:
+ *   text[null] - text to be displayed inside tip can be:
  *      string - insert string inside tip
  *      jQuery/Node element - append inside tip
  *      function - call in context of actual element and take resulting string or jQuery/Node element
  *   closeText["close"] - text to place in close link
  *   tipClass[""] - additional classes to add to tip widget
- *   zIndex[1000] - css z-index property for tip widget
  *   hide[null] - jquery-type duration for hide animation
  *   show[null] - jqyery-type duration for show animation
  *   position["right"] - type of position for widget, possible values:
@@ -37,10 +36,9 @@ var uiTipClasses =
 $.widget("ui.tip", {
     options: {
         autoOpen: true,
-        text: "INSERT YOUR OWN TIP HERE!",
+        text: null
         closeText: "close",
         tipClass: "",
-        zIndex: 1000,
         hide: null,
         show: null,
         position: 'right',
@@ -53,8 +51,7 @@ $.widget("ui.tip", {
         var uiTip = (self.uiTip = $("<div/>"))
                 .appendTo(document.body)
                 .hide()
-                .addClass(uiTipClasses + options.tipClass + " ui-tip-"+options.position)
-                .css({ zIndex: options.zIndex }),
+                .addClass(uiTipClasses + options.tipClass + " ui-tip-"+options.position),
 
             uiTipContent = $("<div/>")
                 .append($.isFunction(self.options.text)
@@ -111,6 +108,7 @@ $.widget("ui.tip", {
     _position: function() {
         var topOffset;
         var leftOffset;
+        var zIndex = this.element.zIndex() + 1;
         if (this.options.position.search(/left$/) > -1) {
             leftOffset = this.element.offset().left - this.uiTip.outerWidth() - this.options.horizontalOffset;
         } else {
@@ -127,7 +125,8 @@ $.widget("ui.tip", {
         this.uiTip.css({
             position: "absolute",
             top: topOffset,
-            left: leftOffset
+            left: leftOffset,
+            zIndex: zIndex
         });
     },
     open: function() {
